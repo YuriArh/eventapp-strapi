@@ -1,3 +1,4 @@
+import FormData from "form-data";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { NewEventData } from "../../interfaces/NewEvent";
 import Event from "../../interfaces/Event";
@@ -7,7 +8,7 @@ import { MyKnownError } from "../../interfaces/NewEvent";
 
 export const createEvent = createAsyncThunk<
   Event[],
-  NewEventData,
+  FormData,
   { rejectValue: MyKnownError }
 >(
   "newEvent/createEvent",
@@ -15,9 +16,10 @@ export const createEvent = createAsyncThunk<
   async (newEvent, { rejectWithValue }) => {
     console.log(newEvent);
     try {
-      const response = await axios.post("http://localhost:1337/api/events", {
-        data: newEvent,
-      });
+      const response = await axios.post(
+        "http://localhost:1337/api/events",
+        newEvent
+      );
       return response.data;
     } catch (error: any) {
       const err = error as AxiosError<MyKnownError>;

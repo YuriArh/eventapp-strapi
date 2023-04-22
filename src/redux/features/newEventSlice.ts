@@ -5,7 +5,7 @@ import FormData from "form-data";
 import { MyKnownError } from "../../interfaces/NewEvent";
 
 const initialState: NewEvent = {
-  data: {},
+  data: new FormData(),
   isPosting: false,
   error: "",
 };
@@ -15,16 +15,19 @@ const newEventSlice = createSlice({
   initialState,
   reducers: {
     addEventInfo: (state, action: PayloadAction<NewEventData>) => {
-      const { name, desc, date, time } = action.payload;
-      state.data.name = name;
-      state.data.desc = desc;
-      state.data.date = date;
-      state.data.time = time;
+      const { name, description, date, time, acceptedFiles } = action.payload;
+      console.log(acceptedFiles);
+      state.data.append(
+        "data",
+        JSON.stringify({ name, description, date, time })
+      );
+      state.data.append("img", acceptedFiles ? acceptedFiles[0] : null);
+      console.log(state.data);
     },
     addEventLocale: (state, action: PayloadAction<NewEventData>) => {
       const { long, lat } = action.payload;
-      state.data.long = long;
-      state.data.lat = lat;
+      state.data.append("data", JSON.stringify({ long, lat }));
+      console.log(state.data.read());
     },
     cancelAddingEvent: (state) => {
       state = initialState;

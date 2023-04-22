@@ -83,7 +83,7 @@ const LayoutModal = (props: LayoutModalProps) => {
         // ref={frame}
         exit={{ opacity: 1 }}
         onClick={(e) => e.stopPropagation()}
-        animate={{ y: "50%" }}
+        animate={{ y: "20%" }}
         variants={variants}
       >
         <ContentHead>

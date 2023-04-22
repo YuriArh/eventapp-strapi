@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import moment from "moment";
 import { motion } from "framer-motion";
+import { useDropzone, FileWithPath } from "react-dropzone";
 
 import { useAppDispatch } from "../hooks/reduxHook";
 import { openLocationInfo } from "../redux/features/modalSlice";
@@ -20,14 +21,14 @@ const Form = styled.form`
   padding: 0 15px;
 `;
 
-const Input = styled.input`
+const CustomInput = styled.input`
   border: none;
   border-radius: 20px;
   background-color: rgba(230, 230, 230, 0.3);
   padding: 10px;
   outline: none;
 `;
-const InputBlock = styled.div`
+const CustomInputBlock = styled.div`
   background-color: rgba(230, 230, 230, 0.3);
   display: flex;
   align-items: center;
@@ -66,7 +67,7 @@ const PickerInput = styled.input`
   outline: none;
 `;
 
-const Button = styled(motion.input)`
+const Submit = styled(motion.input)`
   background-color: black;
   border-radius: 20px;
   width: 40%;
@@ -79,46 +80,80 @@ const Button = styled(motion.input)`
   }
 `;
 
+const CustomMuiInputBlock = styled.div`
+  background-color: rgba(230, 230, 230, 0.3);
+  display: flex;
+  align-items: center;
+  width: 220px;
+  border-radius: 20px;
+  height: 50px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+`;
+
+const DropZone = styled.div`
+  border-radius: 20px;
+  background-color: rgba(230, 230, 230, 0.3);
+  padding: 10px;
+  cursor: pointer;
+  height: 100px;
+  text-align: center;
+  line-height: 75px;
+  font-size: 14px;
+  color: rgb(117, 117, 117);
+`;
+
 const NewEventForm: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [selectedTime, setSelectedTime] = useState<Date | null>(new Date());
   const [name, setName] = useState<string>("");
-  const [desc, setDesc] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
+    useDropzone();
 
   const dispatch = useAppDispatch();
   let date = moment(selectedDate).format("YYYY-MM-DD");
   let time = moment(selectedTime).format("HH:mm:ss.SSS");
-  console.log(time);
+
+  const files = acceptedFiles.map((file: FileWithPath) => (
+    <li key={file.path}>
+      {file.path} - {file.size} bytes
+    </li>
+  ));
+
   return (
     <NewEventFormDiv>
       <Form
         onSubmit={(e) => {
           e.preventDefault();
-          dispatch(addEventInfo({ name, desc, date, time }));
+          dispatch(
+            addEventInfo({ name, description, date, time, acceptedFiles })
+          );
           dispatch(openLocationInfo());
         }}
       >
         <Label>Title</Label>
-        <Input
-          placeholder="Введите название ивента"
+        <CustomInput
+          placeholder="Enter title here"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          // disableUnderline={true}
         />
-        <Label>Описание</Label>
+        <Label>Description</Label>
         <Textarea
-          placeholder="Введите описание ивента"
-          value={desc}
-          onChange={(e) => setDesc(e.target.value)}
+          placeholder="Enter description here"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         ></Textarea>
-        <Label>Время</Label>
+        <Label>Time</Label>
         <PickerBlock>
           <DatePicker
             value={selectedDate}
             renderInput={({ inputRef, inputProps, InputProps }) => (
-              <InputBlock>
+              <CustomInputBlock>
                 <PickerInput ref={inputRef} {...inputProps} />
                 {InputProps?.endAdornment}
-              </InputBlock>
+              </CustomInputBlock>
             )}
             onChange={(newValue) => {
               setSelectedDate(newValue);
@@ -133,21 +168,28 @@ const NewEventForm: React.FC = () => {
             }}
             ampm={false}
             renderInput={({ inputRef, inputProps, InputProps }) => (
-              <InputBlock>
+              <CustomInputBlock>
                 <PickerInput ref={inputRef} {...inputProps} />
                 {InputProps?.endAdornment}
-              </InputBlock>
+              </CustomInputBlock>
             )}
           />
         </PickerBlock>
 
-        <input type={"file"} hidden></input>
-
-        <Button
+        <Label>File</Label>
+        <DropZone {...getRootProps()}>
+          <input {...getInputProps()} />
+          {isDragActive ? (
+            <p>Drop the files here ...</p>
+          ) : (
+            <p>Drag 'n' drop some files here, or click to select files</p>
+          )}
+        </DropZone>
+        <Submit
           whileHover={{ scale: [1, 1.2] }}
           type={"submit"}
-          value={"Выберите местоположение ивента"}
-        ></Button>
+          value={"Select event location"}
+        ></Submit>
       </Form>
     </NewEventFormDiv>
   );

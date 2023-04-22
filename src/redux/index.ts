@@ -1,4 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { getDefaultMiddleware } from "@reduxjs/toolkit";
+import logger from "redux-logger";
 
 import eventsReducer from "./features/eventsSlice";
 import modalReducer from "./features/modalSlice";
@@ -12,6 +14,10 @@ export const store = configureStore({
     newEvent: newEventReducer,
     locale: localeReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }).concat(logger),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

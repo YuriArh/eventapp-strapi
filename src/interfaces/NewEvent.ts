@@ -1,6 +1,6 @@
 import FormData from "form-data";
 export interface NewEvent {
-  data: NewEventData;
+  data: FormData;
   isPosting?: boolean;
   error?: string;
 }
@@ -9,8 +9,8 @@ export interface NewEventData {
   name?: string;
   long?: number;
   lat?: number;
-  img?: string;
-  desc?: string;
+  acceptedFiles?: File[];
+  description?: string;
   date?: string;
   time?: string;
 }

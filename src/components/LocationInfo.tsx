@@ -62,6 +62,7 @@ const LocationInfo = (props: Props) => {
   const handleDoneClick = () => {
     dispatch(closeLocationInfo());
     props.onLocationButton();
+    dispatch(cancelAddingEvent());
   };
 
   const handleCloseClick = () => {

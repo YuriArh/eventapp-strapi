@@ -21,19 +21,22 @@ const Label = styled.label`
 `;
 
 const EventCard = (props: { eventData: Event }) => {
-  const { name, description, time, date } = props.eventData.attributes;
+  const { name, description, time, date, img } = props.eventData.attributes;
   return (
     <CardDiv>
       <Label>Ивент</Label>
       <h4>{name}</h4>
-
       <Label>Описание</Label>
       {description}
-
       <Label>Время</Label>
       {time.slice(0, 5)}
       <Label>Дата</Label>
       {date}
+      {img.data ? (
+        <img
+          src={`http://localhost:1337${img.data.attributes.formats.thumbnail.url}`}
+        />
+      ) : null}
     </CardDiv>
   );
 };
